@@ -1,0 +1,11 @@
+{
+  "type": "node",
+  "request": "launch",
+  "name": "Spider dev",
+  "program": "${workspaceFolder}/spiders/index.ts",
+  "preLaunchTask": "npm: ci-build",
+  "sourceMaps": true,
+  "smartStep": true,
+  "internalConsoleOptions": "openOnSessionStart",
+  "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+}

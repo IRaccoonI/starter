@@ -1,0 +1,60 @@
+version: "2.1"
+services:
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - 5000:8000
+      - 8011:8011 # sockets for workers
+    environment:
+      - REDIS_TTL=3600
+      - REDIS_URL=redis://redis:6379/
+      - REDIS_PASSWORD=changeMe
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - ML_URL=http://ml:8000/text-to-theme
+    depends_on:
+      - database
+      - redis
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.prod
+    restart: always
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass changeMe
+    volumes:
+      - cache:/data
+  database:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - back
+      - front
+  ml:
+    build: ./ml
+    restart: always
+
+volumes:
+  cache:
+  postgres_data:

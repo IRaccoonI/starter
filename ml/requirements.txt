@@ -1,0 +1,6 @@
+fastapi==0.101.1
+uvicorn==0.23.2
+python-multipart==0.0.6
+nltk==3.8.1
+lemmagen3==3.5.0
+scikit-learn==1.2.2
